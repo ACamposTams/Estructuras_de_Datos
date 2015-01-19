@@ -12,18 +12,18 @@ int main(int argc, const char * argv [])
     std::cout << "Dame el segundo número ";
     std::cin >> n;
     
-    mcd(m,n);
+    std::cout << "MCD(" << m <<", " << n << ") = " << mcd(m,n) << std::endl;
     
     return 0;
 }
 
 int mcd (int m, int n)
 {
-    int r = m%n;
+    int r = m % n;
 
     if (r == 0)
     {
-        return r;
+        return n;
     }
     else
     {
