@@ -1,6 +1,6 @@
 #include <iostream>
 
-int sumaV(int, int, int);
+int sumaV(int [], int, int);
 
 int main(int argc, const char * argv [])
 {
