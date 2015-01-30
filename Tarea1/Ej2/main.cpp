@@ -4,8 +4,6 @@
 
 void imprimeMatriz(int m[N][N], int n);
 int salida(int lab[N][N], int filas, int columnas);
-void guardarPos(int act1,int act2);
-void regresar(int lab[N][N],int X, int Y);
 int actX;
     int actY;
 
