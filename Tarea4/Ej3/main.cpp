@@ -47,9 +47,6 @@ int main()
             selecciones[seleccion-1](editor);
         }
     }
-    
-    delete editor;
-
     return 1;
 }
 
@@ -229,6 +226,13 @@ void openFile(DCL_List<DCL_List<std::string>*> * editor)
     std::fstream file;
     file.open ("example.txt");
     
+    int size = editor->size();
+    
+    for (int i = 0; i <size; ++i)
+    {
+        editor->remove(0);
+    }
+    
     if (file.is_open())
     {
         std::cout << "Archivo cargado" << std::endl;
@@ -270,11 +274,15 @@ DCL_List<std::string> * rowMaker (std::string line)
 
     return renglon;
 }
+
 void saveFile (DCL_List<DCL_List<std::string>*> * editor)
 {
     std::fstream file;
+    
+    file.open("example.txt", std::ofstream::out | std::ofstream::trunc);
+    file.close();
+    
     file.open ("example.txt");
-    file.clear();
 
     for (int i = 0; i < editor->size(); ++i)
     {
@@ -284,7 +292,6 @@ void saveFile (DCL_List<DCL_List<std::string>*> * editor)
         }
         file << std::endl;
     }
-    
     file.close();
 }
 
