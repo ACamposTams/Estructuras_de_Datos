@@ -24,15 +24,6 @@ class BinaryTree {
         void preOrder() const;
         void preOrder(BNode<T> * node) const;
         
-        void inOrder() const;
-        void inOrder(BNode<T> * node) const;
-        
-        void postOrder() const;
-        void postOrder(BNode<T> * node) const;
-        
-        void isLeaf() const;
-        void isLeaf(BNode<T> * node) const;
-        
         void ancestors(BNode<T> * node) const;
         
     };
@@ -59,9 +50,6 @@ class BinaryTree {
     void BinaryTree<T>::clear(BNode<T> * node)
     {
         if (node) {
-            clear(node->getLeft());
-            clear(node->getRight());
-            
             delete node;
         }
     }
@@ -76,7 +64,7 @@ class BinaryTree {
     void BinaryTree<T>::setRoot(BNode<T> * node)
     {
         if (!empty()) {
-            node->setLeft(root);
+            node->setSons(root);
             root->setParent(node);
             root = node;
         }
@@ -101,21 +89,16 @@ class BinaryTree {
     {
         bool inserted = false;
         
-        if (empty() || !parent) {
+        if (empty() || !parent) 
+        {
             setRoot(value);
             inserted = true;
         }
-        else {
-            if (!parent->getLeft()) {
-                parent->setLeft(value);
-                value->setParent(parent);
-                inserted = true;
-            }
-            else if (!parent->getRight()) {
-                parent->setRight(value);
-                value->setParent(parent);
-                inserted = true;
-            }
+        else 
+        {
+            parent->setSons(value);
+            value->setParent(parent);
+            inserted = true;
         }
         
         return inserted;
@@ -135,70 +118,8 @@ class BinaryTree {
             std::cout << *node << std::endl;
             
             /* Invocar a los hijos */
-            preOrder(node->getLeft());
-            preOrder(node->getRight());
+            preOrder(node->getSons());
   
-        }
-    }
-    
-    template <class T>
-    void BinaryTree<T>::inOrder() const
-    {
-        inOrder(root);
-    }
-    
-    template <class T>
-    void BinaryTree<T>::inOrder(BNode<T> * node) const
-    {
-        if (node) {
-            
-            /* Invocar al hijo izquierdo */
-            inOrder(node->getLeft());
-            
-            /* Procesar el nodo */
-            std::cout << *node << std::endl;
-            
-            /* Invocar al hijo derecho */
-            inOrder(node->getRight());
-        }
-    }
-    
-    template <class T>
-    void BinaryTree<T>::postOrder() const
-    {
-        postOrder(root);
-    }
-    
-    template <class T>
-    void BinaryTree<T>::postOrder(BNode<T> * node) const
-    {
-        if (node) {
-            /* Invocar a los hijos */
-            postOrder(node->getLeft());
-            postOrder(node->getRight());
-            
-            /* Procesar el nodo */
-            std::cout << *node << std::endl;
-        }
-    }
-    
-    template <class T>
-    void BinaryTree<T>::isLeaf() const
-    {
-        isLeaf(root);
-    }
-    
-    template <class T>
-    void BinaryTree<T>::isLeaf(BNode<T> * node) const
-    {
-        if (node) {
-            if (!node->getLeft() && !node->getRight()) {
-                std::cout << *node << std::endl;
-            }
-            else {
-                isLeaf(node->getLeft());
-                isLeaf(node->getRight());
-            }
         }
     }
     

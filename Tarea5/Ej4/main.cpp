@@ -107,16 +107,8 @@ void insertarPersona(BNode<Persona> * raiz)
     {
         if(buscarPersona(raiz,nuevoPadre))
         {
-            if (!buscarPersona(raiz,nuevoPadre)->getLeft())
-            {
-                buscarPersona(raiz,nuevoPadre)->setLeft(nuevo);
                 nuevo->setParent(buscarPersona(raiz,nuevoPadre));
-            }
-            else
-            {
-                buscarPersona(raiz,nuevoPadre)->setRight(nuevo);
-                nuevo->setParent(buscarPersona(raiz,nuevoPadre));
-            }
+                buscarPersona(raiz,nuevoPadre)->setSons(nuevo);
         }
         else
         {
@@ -175,18 +167,12 @@ BNode<Persona> * buscarPersona (BNode<Persona> * node,std::string persona)
         }
         else
         {
-            if(buscarPersona(node->getLeft(),persona))
+            for(int i = 0; i < node->getSons()->size();++i)
             {
-                return buscarPersona(node->getLeft(),persona) ;
+                node = buscarPersona(node->getSons()->at(i)->getInfo(),persona);
             }
-            else if(buscarPersona(node->getRight(),persona))
-            {
-                return buscarPersona(node->getRight(),persona);
-            }
-            else
-            {
-                return nullptr;
-            }
+            
+            return node;
         }
     }
 }
@@ -214,8 +200,11 @@ void getDescendents(BNode<Persona> * node)
     if(node)
     {
         std::cout << *node << std::endl;
-        getDescendents(node->getLeft());
-        getDescendents(node->getRight());
+        for(int i=0; i < node->getSons()->size(); ++i)
+        {
+            getDescendents(node->getSons()->at(i)->getInfo());
+        }
+
     }
 }
 
@@ -276,64 +265,51 @@ void buscaPrimos(BNode<Persona> * persona)
             padre = persona->getParent();
             
              if (padre->getParent())
-        {
-            BNode<Persona> * abuelo = padre->getParent();
-            
-            if(padre->getLeft() && padre->getRight())
-            {
-                if(padre->getLeft()->getInfo().getNombre()==persona->getInfo().getNombre())
+             {
+                 BNode<Persona> * abuelo = padre->getParent();
+                 
+                 if(padre->getSons()->size() > 1)
+                 {
+                     std::cout << "Los hermanos de " << persona->getInfo().getNombre() << " son: " <<std::endl;
+                     for (int i = 0; i < padre->getSons()->size(); ++i )
+                     {
+                         if(padre->getSons()->at(i)->getInfo() != persona)
+                         {
+                             std::cout << *padre->getSons()->at(i)->getInfo() << std::endl;
+                         }
+                     }
+                 }
+                else
                 {
-                    std::cout << "El hermano de " << persona->getInfo().getNombre() << ": " << padre->getRight()->getInfo().getNombre() << std::endl;
+                    std::cout << "Esa persona no tiene hermanos" << std::endl;
                     continua = 1;
                 }
-                else if(padre->getRight()->getInfo().getNombre()==persona->getInfo().getNombre())
-                {
-                    std::cout << "El hermano de " << persona->getInfo().getNombre() << ": " << padre->getLeft()->getInfo().getNombre() << std::endl;
-                    continua = 1;
-                }
-            }
-            else
-            {
-                std::cout << "Esa persona no tiene hermanos" << std::endl;
-            }
             
             BNode<Persona> * tio;
             
-            if (abuelo->getLeft() && abuelo->getRight())
+            if (abuelo->getSons()->size() > 1)
             {
-                if (abuelo->getLeft()==padre)
+                for (int i = 0; i < abuelo->getSons()->size(); ++i)
                 {
-                    tio = abuelo->getRight();
+                    tio = abuelo->getSons()->at(i)->getInfo();
+                    
+                    if(tio->getSons()->size() != 0)
+                    {
+                        std::cout << "Primos de " << persona->getInfo().getNombre() << " son: " <<std::endl;
+                        for (int j = 0; j < tio->getSons()->size();++j)
+                        {
+                            if(tio->getSons()->at(i)->getInfo() != persona)
+                            {
+                                std::cout << *tio->getSons()->at(i)->getInfo() << std::endl;
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    tio = abuelo->getLeft();
-                }
-                
-                if(tio->getLeft() && tio->getRight())
-                {
-                    std::cout << "Primos de " << persona->getInfo().getNombre() << ": " << tio->getLeft()->getInfo().getNombre() << "," << tio->getRight()->getInfo().getNombre() << std::endl;
-                    continua = 1;
-                }
-                else if (tio->getLeft())
-                {
-                    std::cout << "Primos de " << persona->getInfo().getNombre() << ": " << tio->getLeft()->getInfo().getNombre() << std::endl;
-                    continua = 1;
-                }
-                else if (tio->getRight())
-                {
-                    std::cout << "Primos de " << persona->getInfo().getNombre() << ": " << tio->getRight()->getInfo().getNombre() << std::endl;
-                    continua = 1;
-                }
-                else
-                {
-                    std::cout << "Este nodo no tiene primos" << std::endl;
-                    continua = 1;
-                }
+                continua = 1;
             }
             else
             {
-                std::cout << "El tío de esta persona no está registrado por lo que no se pueden buscar sus tíos" << std::endl;
+                std::cout << "Este nodo no tiene primos" << std::endl;
                 continua = 1;
             }
         }
@@ -341,18 +317,17 @@ void buscaPrimos(BNode<Persona> * persona)
         {
             std::cout << "El abuelo de esta persona no está registrado por lo que no se podrán obtener sus primos" << std::endl;
             
-            if(padre->getLeft() && padre->getRight())
+            if(padre->getSons()->size() > 1)
             {
-                if(padre->getLeft()->getInfo().getNombre()==persona->getInfo().getNombre())
+                std::cout << "Los hermanos de " << persona->getInfo().getNombre() << " son: " <<std::endl;
+                for (int i = 0; i < padre->getSons()->size(); ++i )
                 {
-                    std::cout << "El hermano de " << persona->getInfo().getNombre() << ": " << padre->getRight()->getInfo().getNombre() << std::endl;
-                    continua = 1;
+                    if (padre->getSons()->at(i)->getInfo() != persona)
+                    {
+                        std::cout << *padre->getSons()->at(i)->getInfo() << std::endl;
+                    }
                 }
-                else if(padre->getRight()->getInfo().getNombre()==persona->getInfo().getNombre())
-                {
-                    std::cout << "El hermano de " << persona->getInfo().getNombre() << ": " << padre->getLeft()->getInfo().getNombre() << std::endl;
-                    continua = 1;
-                }
+                continua = 1;
             }
             else
             {
@@ -360,8 +335,7 @@ void buscaPrimos(BNode<Persona> * persona)
                 continua = 1;
             }
         }
-            
-        }
+    }
         else
         {
             std::cout << "El padre de esta persona no está registrado en el árbol por lo que no se pueden buscar sus hermanos ni sus primos" << std::endl;
@@ -378,8 +352,11 @@ void buscarVivos(BNode<Persona> * persona)
         {
             std::cout << *persona << std::endl;
         }
-        buscarVivos(persona->getLeft());
-        buscarVivos(persona->getRight());
+        
+        for(int i = 0; i < persona->getSons()->size();++i)
+        {
+            buscarVivos(persona->getSons()->at(i)->getInfo());
+        }
     }
 }
 
@@ -408,8 +385,17 @@ void fechaFallecidos(BNode<Persona> * persona,int year,int month,int day)
             if (persona->getInfo().getEstado() == "Fallecido")
             {
                 std::cout << *persona << std::endl;
-                fechaFallecidos(persona->getLeft(),year,month,day);
-                fechaFallecidos(persona->getRight(),year,month,day);
+                for (int i = 0; i < persona->getSons()->size();++i)
+                {
+                    fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < persona->getSons()->size();++i)
+                {
+                    fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                }
             }
         }
         else if (persona->getInfo().getAnio() == year)
@@ -419,8 +405,17 @@ void fechaFallecidos(BNode<Persona> * persona,int year,int month,int day)
                 if (persona->getInfo().getEstado() == "Fallecido")
             {
                 std::cout << *persona << std::endl;
-                fechaFallecidos(persona->getLeft(),year,month,day);
-                fechaFallecidos(persona->getRight(),year,month,day);
+                for (int i = 0; i < persona->getSons()->size();++i)
+                {
+                    fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < persona->getSons()->size();++i)
+                {
+                    fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                }
             }
             }
             else if (persona->getInfo().getMes() == month)
@@ -430,8 +425,17 @@ void fechaFallecidos(BNode<Persona> * persona,int year,int month,int day)
                     if (persona->getInfo().getEstado() == "Fallecido")
                     {
                         std::cout << *persona << std::endl;
-                        fechaFallecidos(persona->getLeft(),year,month,day);
-                        fechaFallecidos(persona->getRight(),year,month,day);
+                for (int i = 0; i < persona->getSons()->size();++i)
+                {
+                    fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < persona->getSons()->size();++i)
+                        {
+                            fechaFallecidos(persona->getSons()->at(i)->getInfo(),year,month,day);
+                        }
                     }
                 }
             }
