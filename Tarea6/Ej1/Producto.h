@@ -3,14 +3,14 @@ using namespace std;
 
 class Producto
 {
-private:
+	private:
 	string nombre;
 	int cantidad;
 	float precio;
 	
-public:
+	public:
 	Producto()  { }
-	virtual ~Producto() {}
+	~Producto() {}
 	Producto (string,int,float);
 	
 	void setNombre(string);
@@ -59,13 +59,13 @@ void Producto::setPrecio(float price)
 
 float Producto::getPrecio() 
 { 
-    return precio; 
+	return precio; 
 }
 
 
 float Producto::getTotal() 
 { 
-    return precio *cantidad; 
+	return precio *cantidad; 
 }
 
 ostream & operator << (ostream & os, const Producto & producto)

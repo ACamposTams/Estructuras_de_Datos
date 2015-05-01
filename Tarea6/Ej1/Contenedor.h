@@ -11,7 +11,7 @@ private:
 public:
 	Contenedor() { }
 	Contenedor(string);
-	virtual ~Contenedor() {}
+	~Contenedor() {}
 	
 	string getNombre();
 	void setNombre(string n);
@@ -60,7 +60,7 @@ ostream & operator << (ostream & os, const Contenedor & contenedor)
 	os << "Nombre: " << contenedor.nombre << endl;
 	for(auto i : contenedor.productos)
 	{
-		 os << i;
+		os << i;
 	}
 	os << "Total del contenedor: $" << contenedor.getTotal() << endl << endl;
 	return os;
